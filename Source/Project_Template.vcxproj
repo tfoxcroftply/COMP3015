@@ -151,8 +151,10 @@
     <ClCompile Include="helper\glutils.cpp" />
     <ClCompile Include="Init.cpp" />
     <ClCompile Include="ShowcaseScene.cpp" />
+    <ClCompile Include="Camera.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Camera.h" />
     <ClInclude Include="helper\glslprogram.h" />
     <ClInclude Include="helper\glutils.h" />
     <ClInclude Include="helper\scene.h" />
