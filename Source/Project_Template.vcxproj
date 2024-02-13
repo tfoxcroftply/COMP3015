@@ -155,6 +155,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="ObjectGen.h" />
+    <ClInclude Include="Models.h" />
     <ClInclude Include="helper\glslprogram.h" />
     <ClInclude Include="helper\glutils.h" />
     <ClInclude Include="helper\scene.h" />
@@ -164,7 +166,10 @@
     <ClInclude Include="ShowcaseScene.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="resources\shaders\shader.frag" />
+    <None Include="resources\shaders\shader.frag">
+      <FileType>Document</FileType>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </None>
     <None Include="resources\shaders\shader.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

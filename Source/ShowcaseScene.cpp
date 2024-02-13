@@ -5,7 +5,10 @@
 
 #include "ShowcaseScene.h"
 #include "helper/glutils.h"
+
 #include "Camera.h"
+#include "Models.h"
+#include "ObjectGen.h"
 
 #include <GLFW/glfw3.h>
 
@@ -14,11 +17,16 @@
 Camera camera;
 GLFWwindow* mainWindow;
 
+Model object;
+
 using std::string;
 using std::cerr;
 using std::endl;
 using std::cout;
 using glm::vec3;
+
+static int FrameRate = 120;
+static int FOV = 70;
 
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
@@ -35,55 +43,10 @@ void ShowcaseScene::initScene()
 
     cout << endl;
 
+    object.Data = GenerateSquare();
+    object.Transformation = glm::mat4(1.0f);
+
     prog.printActiveUniforms();
-
-    /////////////////// Create the VBO ////////////////////
-    float positionData[] = {
-        -1.0f, -1.0f, 0.0f, // t1
-         1.0f, -1.0f, 0.0f,
-        -1.0f,  1.0f, 0.0f,
-         1.0f, -1.0f, 0.0f, // t2
-        -1.0f,  1.0f, 0.0f,
-         1.0f,  1.0f, 0.0f 
-    };
-
-    float colorData[] = {
-     1.0f, 0.0f, 0.0f,
-     0.0f, 1.0f, 0.0f,
-     0.0f, 0.0f, 1.0f,
-     0.0f, 1.0f, 0.0f,
-     0.0f, 0.0f, 1.0f,
-     1.0f, 1.0f, 0.0f 
-    };
-
-    // Create and populate the buffer objects
-    GLuint vboHandles[2];
-    glGenBuffers(2, vboHandles);
-    GLuint positionBufferHandle = vboHandles[0];
-    GLuint colorBufferHandle = vboHandles[1];
-
-    glBindBuffer(GL_ARRAY_BUFFER, positionBufferHandle);
-    glBufferData(GL_ARRAY_BUFFER, 18 * sizeof(float), positionData, GL_STATIC_DRAW);
-
-    glBindBuffer(GL_ARRAY_BUFFER, colorBufferHandle);
-    glBufferData(GL_ARRAY_BUFFER, 18 * sizeof(float), colorData, GL_STATIC_DRAW);
-
-    // Create and set-up the vertex array object
-    glGenVertexArrays( 1, &vaoHandle );
-    glBindVertexArray(vaoHandle);
-
-    glEnableVertexAttribArray(0);  // Vertex position
-    glEnableVertexAttribArray(1);  // Vertex color
-
-    glBindVertexBuffer(0, positionBufferHandle, 0, sizeof(GLfloat)*3);
-    glBindVertexBuffer(1, colorBufferHandle, 0, sizeof(GLfloat)*3);
-
-    glVertexAttribFormat(0, 3, GL_FLOAT, GL_FALSE, 0);
-    glVertexAttribBinding(0, 0);
-    glVertexAttribFormat(1, 3, GL_FLOAT, GL_FALSE, 0);
-    glVertexAttribBinding(1, 1);
-
-    glBindVertexArray(0);
 
     mainWindow = glfwGetCurrentContext();
     camera.Window = mainWindow;
@@ -120,24 +83,23 @@ void ShowcaseScene::render() // Render loop
 
     camera.Update(deltaTime);
 
-    glm::mat4 Model = glm::mat4(1.0f);
-
-    prog.setUniform("ModelIn", Model);
+    prog.setUniform("ModelIn", object.Transformation);
     prog.setUniform("ViewIn", camera.GetViewMatrix());
     prog.setUniform("ProjectionIn", camera.Projection);
 
     glClear(GL_COLOR_BUFFER_BIT);
 
-    glBindVertexArray(vaoHandle);
-    glDrawArrays(GL_TRIANGLES, 0, 6);
+    glBindVertexArray(object.Data.VAO); // grab the assigned vao
+    glDrawElements(GL_TRIANGLES, object.Data.ArraySize, GL_UNSIGNED_INT, 0); // and then draw it
 
     glBindVertexArray(0);
 
+    while (glfwGetTime() - currentFrame < 1 / FrameRate) {}
 }
 
 void ShowcaseScene::resize(int w, int h)
 {
-    camera.Projection = glm::perspective(glm::radians(70.0f), (float)w / (float)h, 0.01f, 100.0f);
+    camera.Projection = glm::perspective(glm::radians(float(FOV)), (float)w / (float)h, 0.01f, 100.0f);
     glViewport(0,0,w,h);
 }
 
