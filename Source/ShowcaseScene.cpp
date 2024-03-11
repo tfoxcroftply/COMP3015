@@ -18,6 +18,8 @@ Camera camera;
 GLFWwindow* mainWindow;
 
 Model object;
+Model skybox;
+
 
 using std::string;
 using std::cerr;
@@ -40,12 +42,6 @@ void mouse_callback(GLFWwindow* Window, double X, double Y) {
 void ShowcaseScene::initScene()
 {
     compile();
-
-    cout << endl;
-
-    object.Data = GenerateSquare();
-    object.Transformation = glm::mat4(1.0f);
-
     prog.printActiveUniforms();
 
     mainWindow = glfwGetCurrentContext();
@@ -53,6 +49,13 @@ void ShowcaseScene::initScene()
 
     glfwSetCursorPosCallback(mainWindow, mouse_callback);
     glfwSetInputMode(mainWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
+    // Object gen
+    object.Data = GenerateSquare();
+    object.Transformation = glm::mat4(1.0f);
+    object.Transformation = glm::rotate(object.Transformation, glm::radians(90.0f), vec3(1.0f, 0.0f, 0.0f));
+
+    skybox.Data = GenerateSkybox();
 }
 
 void ShowcaseScene::compile()
@@ -66,6 +69,7 @@ void ShowcaseScene::compile()
 		cerr << e.what() << endl;
 		exit(EXIT_FAILURE);
 	}
+
 }
 
 void ShowcaseScene::update(float t)
@@ -77,23 +81,30 @@ void ShowcaseScene::render() // Render loop
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    float currentFrame = glfwGetTime(); // Calculate current times and time taken
+    float currentFrame = glfwGetTime();
     deltaTime = currentFrame - lastFrame;
     lastFrame = currentFrame;
 
     camera.Update(deltaTime);
 
-    prog.setUniform("ModelIn", object.Transformation);
+
     prog.setUniform("ViewIn", camera.GetViewMatrix());
     prog.setUniform("ProjectionIn", camera.Projection);
 
-    glClear(GL_COLOR_BUFFER_BIT);
-
-    glBindVertexArray(object.Data.VAO); // grab the assigned vao
-    glDrawElements(GL_TRIANGLES, object.Data.ArraySize, GL_UNSIGNED_INT, 0); // and then draw it
-
+    prog.setUniform("ModelIn", glm::mat4(1.0f));
+    prog.setUniform("SkyboxActive", true);
+    glDepthFunc(GL_LEQUAL);
+    glBindVertexArray(skybox.Data.VAO);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, skybox.Data.TextureID);
+    glDrawArrays(GL_TRIANGLES, 0, skybox.Data.ArraySize);
+    glDepthFunc(GL_LESS);
     glBindVertexArray(0);
+    prog.setUniform("SkyboxActive", false);
 
+    prog.setUniform("ModelIn", object.Transformation);
+    glBindVertexArray(object.Data.VAO); // grab the assigned vao
+    glDrawElements(GL_TRIANGLES, object.Data.ArraySize, GL_UNSIGNED_INT, 0); // draw 
     while (glfwGetTime() - currentFrame < 1 / FrameRate) {}
 }
 
