@@ -10,49 +10,64 @@
 
 ModelData GenerateSquare() {
     float vertices[] = {
-        -1.0f, -1.0f, 0.0f,
-         1.0f, -1.0f, 0.0f,
-        -1.0f,  1.0f, 0.0f,
-         1.0f,  1.0f, 0.0f
+        -1.0f, 0.0f, -1.0f,
+         1.0f, 0.0f, -1.0f,
+        -1.0f, 0.0f,  1.0f,
+         1.0f, 0.0f,  1.0f
     };
 
     unsigned int indices[] = {
         0, 1, 2,
-        1, 2, 3
+        1, 3, 2
     };
 
     float colors[] = {
         1.0f, 0.0f, 0.0f,
         0.0f, 1.0f, 0.0f,
         0.0f, 0.0f, 1.0f,
-        1.0f, 1.0f, 0.0f 
+        1.0f, 1.0f, 0.0f
     };
 
-    GLuint vao, vertVbo, colVbo, ebo;
-    glGenVertexArrays(1, &vao);
-    glGenBuffers(1, &vertVbo);
-    glGenBuffers(1, &colVbo);
-    glGenBuffers(1, &ebo);
+    float normals[] = {
+        0.0f, 1.0f, 0.0f,  // Up
+        0.0f, 1.0f, 0.0f,  // Up
+        0.0f, 1.0f, 0.0f,  // Up
+        0.0f, 1.0f, 0.0f   // Up
+    };
 
-    glBindVertexArray(vao);
 
-    glBindBuffer(GL_ARRAY_BUFFER, vertVbo);
+    GLuint VAO, vertVBO, colVBO, normVBO, EBO;
+    glGenVertexArrays(1, &VAO);
+    glGenBuffers(1, &vertVBO);
+    glGenBuffers(1, &colVBO);
+    glGenBuffers(1, &normVBO);
+    glGenBuffers(1, &EBO);
+
+    glBindVertexArray(VAO);
+
+    glBindBuffer(GL_ARRAY_BUFFER, vertVBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
-    glBindBuffer(GL_ARRAY_BUFFER, colVbo);
+    glBindBuffer(GL_ARRAY_BUFFER, colVBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(colors), colors, GL_STATIC_DRAW);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(1);
 
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+    glBindBuffer(GL_ARRAY_BUFFER, normVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(normals), normals, GL_STATIC_DRAW);
+    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(2);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
     glBindVertexArray(0);
 
-    return { int(vao), sizeof(indices) / sizeof(indices[0]) };
+    return { int(VAO), sizeof(indices) / sizeof(indices[0]), 0 };
 }
+
 
 ModelData GenerateSkybox() {
     std::string Extension = ".png";
@@ -153,5 +168,5 @@ ModelData GenerateSkybox() {
 
     glBindVertexArray(0);
 
-    return {int(vao),sizeof(vertices),TexID};
+    return { int(vao), sizeof(vertices), TexID };
 }

@@ -5,7 +5,7 @@
 struct ModelData {
 	int VAO;
 	int ArraySize;
-	unsigned int TextureID = 0;
+	unsigned int TextureID = -1;
 };
 
 struct Model {
