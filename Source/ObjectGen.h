@@ -8,7 +8,7 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
-ModelData GenerateSquare() {
+/* ModelData GenerateSquare() {
     float vertices[] = {
         -1.0f, 0.0f, -1.0f,
          1.0f, 0.0f, -1.0f,
@@ -66,7 +66,7 @@ ModelData GenerateSquare() {
     glBindVertexArray(0);
 
     return { int(VAO), sizeof(indices) / sizeof(indices[0]), 0 };
-}
+} */
 
 
 ModelData GenerateSkybox() {
@@ -89,7 +89,6 @@ ModelData GenerateSkybox() {
     glGenTextures(1, &TexID);
     glBindTexture(GL_TEXTURE_CUBE_MAP, TexID);
 
-
     int width, height, nrChannels;
     for (unsigned int i = 0; i < Faces.size(); i++) {
         unsigned char* data = stbi_load(Faces[i].c_str(), &width, &height, &nrChannels, 0);
@@ -101,8 +100,6 @@ ModelData GenerateSkybox() {
             stbi_image_free(data);
         }
     }
-
-
 
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
