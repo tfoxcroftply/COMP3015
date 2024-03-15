@@ -16,7 +16,7 @@ uniform bool SkyboxActive;
 
 void main() {
     if (!SkyboxActive) {
-        Color = vec3(0.5f,0.5f,0.5f); //VertexColor;
+        Color = vec3(0.5f,0.5f,0.5f); // default colour
         Normal = VertexNormal;
         FragPosition = vec3(ModelIn * vec4(VertexPosition, 1.0));
         gl_Position = ProjectionIn * ViewIn * ModelIn * vec4(VertexPosition, 1.0);

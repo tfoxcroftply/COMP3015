@@ -1,11 +1,12 @@
-#pragma once
+#ifndef SCENEBASIC_UNIFORM_H
+#define SCENEBASIC_UNIFORM_H
 
 #include "helper/scene.h"
+
 #include <glad/glad.h>
 #include "helper/glslprogram.h"
 
-
-class ShowcaseScene : public Scene
+class SceneBasic_Uniform : public Scene
 {
 private:
     GLuint vaoHandle;
@@ -15,11 +16,12 @@ private:
     void compile();
 
 public:
-    ShowcaseScene();
+    SceneBasic_Uniform();
 
     void initScene();
-    void update( float t );
+    void update(float t);
     void render();
     void resize(int, int);
 };
 
+#endif // SCENEBASIC_UNIFORM_H

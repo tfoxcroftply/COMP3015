@@ -28,16 +28,6 @@ void main() {
         vec3 FlipCoords = vec3(-TexCoords.x, TexCoords.y, TexCoords.z); // stbi seems to load it in the wrong way
         FragColor = texture(skybox, FlipCoords);
     } else {
-        //vec3 Norm = normalize(Normal);
-        //vec3 LightDirection = normalize(LightPosition - vec3(FragPosition));
-       // float Diffuse = max(dot(Norm, LightDirection), 0.0);
-        //vec3 DiffuseWithColor = Diffuse * LightColor;
-
-       // vec3 ObjectWithAmbient = mix(Color, AmbientColor, AmbientStrength); // repurposed to act like a haze
-       // vec3 ObjectAndDiffuse = Color + DiffuseWithColor;
-
-        //FragColor = vec4(ObjectAndDiffuse, 1.0);
-
         float FogFactor = smoothstep(FogStart, FogEnd, length(FragPosition.xyz - CameraPos));
 
         vec3 Ambient = (Brightness * LightColor);
