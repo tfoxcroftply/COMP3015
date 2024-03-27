@@ -147,7 +147,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\..\..\Public\OpenGL\src\glad.c" />
+    <ClCompile Include="glad.c" />
     <ClCompile Include="helper\glslprogram.cpp" />
     <ClCompile Include="helper\glutils.cpp" />
     <ClCompile Include="helper\objmesh.cpp" />
@@ -172,7 +172,6 @@
     <ClInclude Include="helper\stb\stb_image.h" />
     <ClInclude Include="helper\stb\stb_image_write.h" />
     <ClInclude Include="scenebasic_uniform.h" />
-    <ClInclude Include="stb_image.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\shaders\shader.frag">
