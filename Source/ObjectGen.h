@@ -73,17 +73,17 @@ int LoadTexture(std::string Path) {
     glGenTextures(1, &texture);
     glBindTexture(GL_TEXTURE_2D, texture);
 
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
+    glGenerateMipmap(GL_TEXTURE_2D);
+
     int width, height, channels;
-    unsigned char* data = stbi_load(Path.c_str(), &width, &height, &channels, 0);
+    unsigned char* data = stbi_load(Path.c_str(), &width, &height, &channels, 4);
     if (data)
     {
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-        glGenerateMipmap(GL_TEXTURE_2D);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+        std::cout << Path;
         return texture;
     }
     else
@@ -93,6 +93,41 @@ int LoadTexture(std::string Path) {
     stbi_image_free(data);
 
     return -1;
+}
+
+ModelData GenerateSea() {
+    float vertices[] = {
+        -0.5f, 0.0f, -0.5f,
+         0.5f, 0.0f, -0.5f,
+         0.5f, 0.0f, 0.5f,
+        -0.5f, 0.0f, 0.5f
+    };
+    unsigned int indices[] = {
+        0, 1, 2,
+        2, 3, 0
+    };
+
+    GLuint vao, vertVbo, ebo;
+    glGenVertexArrays(1, &vao);
+    glGenBuffers(1, &vertVbo);
+    glGenBuffers(1, &ebo);
+
+    glBindVertexArray(vao);
+
+    glBindBuffer(GL_ARRAY_BUFFER, vertVbo);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+    glBindVertexArray(0);
+
+    unsigned int Tex = LoadTexture("resources/textures/sea.png");
+
+    return { int(vao), sizeof(indices), Tex };
+
 }
 
 ModelData GenerateSkybox() {

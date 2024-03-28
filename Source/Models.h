@@ -10,5 +10,5 @@ struct ModelData {
 
 struct Model {
 	ModelData Data;
-	glm::mat4 Transformation;
+	glm::mat4 Transformation = glm::mat4(1.0f);
 };

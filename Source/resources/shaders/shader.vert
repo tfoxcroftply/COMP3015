@@ -2,9 +2,10 @@
 
 layout (location = 0) in vec3 VertexPosition;
 layout (location = 1) in vec3 VertexNormal;
-layout (location = 2) in vec3 VertexColor;
+layout (location = 2) in vec2 VertexTexCoords;
 
-out vec3 TexCoords;
+out vec3 SkyboxCoords;
+out vec2 TexCoords;
 out vec3 Color;
 out vec3 Normal;
 out vec3 FragPosition;
@@ -16,12 +17,13 @@ uniform bool SkyboxActive;
 
 void main() {
     if (!SkyboxActive) {
-        Color = vec3(0.5f,0.5f,0.5f); // default colour
+        Color = vec3(0.5, 0.5, 0.5); // default color
         Normal = VertexNormal;
         FragPosition = vec3(ModelIn * vec4(VertexPosition, 1.0));
+        TexCoords = VertexTexCoords;
         gl_Position = ProjectionIn * ViewIn * ModelIn * vec4(VertexPosition, 1.0);
     } else {
-        TexCoords = VertexPosition;
+        SkyboxCoords = VertexPosition;
         gl_Position = ProjectionIn * mat4(mat3(ViewIn)) * vec4(VertexPosition, 1.0);
     }
 }

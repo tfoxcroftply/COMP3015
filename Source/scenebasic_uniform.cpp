@@ -14,8 +14,11 @@ Camera camera;
 GLFWwindow* mainWindow;
 Model object;
 Model skybox;
-std::unique_ptr<ObjMesh> mesh;
+Model sea;
+std::unique_ptr<ObjMesh> boatMesh;
+std::unique_ptr<ObjMesh> seaMesh;
 int boatTexture;
+int seaTexture;
 
 using std::string;
 using std::cerr;
@@ -51,8 +54,10 @@ void SceneBasic_Uniform::initScene()
     prog.setUniform("Brightness", Brightness);
     prog.setUniform("LightPosition", LightPosition);
     prog.setUniform("LightColor", LightColor);
+    prog.setUniform("SetReflection", Reflectance);
 
     boatTexture = LoadTexture("resources/textures/boat.png");
+    seaTexture = LoadTexture("resources/textures/sea.png");
 
     // Object gen
     //object.Data = GenerateSquare();
@@ -61,9 +66,10 @@ void SceneBasic_Uniform::initScene()
 
     skybox.Data = GenerateSkybox();
     skybox.Transformation = mat4(1.0f);
-    skybox.Transformation = scale(skybox.Transformation, vec3(999.0f, 999.0f, 999.0f));
+    //skybox.Transformation = scale(skybox.Transformation, vec3(1.0f, 1.0f, 999.0f));
 
-    mesh = ObjMesh::load("resources/models/boat.obj");
+    boatMesh = ObjMesh::load("resources/models/boat.obj");
+    seaMesh = ObjMesh::load("resources/models/sea.obj");
 
     //glEnable(GL_DEPTH_TEST);
     //glDepthFunc(GL_LESS);
@@ -92,10 +98,12 @@ void SceneBasic_Uniform::render() // Render loop
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+    //Timing
     float currentFrame = glfwGetTime();
     deltaTime = currentFrame - lastFrame;
     lastFrame = currentFrame;
 
+    //Camera
     camera.Update(deltaTime);
 
     //MVP
@@ -109,40 +117,45 @@ void SceneBasic_Uniform::render() // Render loop
     //Skybox
     glDisable(GL_DEPTH_TEST);
     prog.setUniform("SkyboxActive", true);
-    //glDepthFunc(GL_LEQUAL);
+
     glBindVertexArray(skybox.Data.VAO);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_CUBE_MAP, skybox.Data.TextureID);
     glDrawArrays(GL_TRIANGLES, 0, skybox.Data.ArraySize);
+
     glBindVertexArray(0);
-    //glDepthFunc(GL_LESS);
-    prog.setUniform("SkyboxActive", false);
     glEnable(GL_DEPTH_TEST);
-
-    //Square
     prog.setUniform("SkyboxActive", false);
-    prog.setUniform("SetReflection", Reflectance);
-    //glBindVertexArray(object.Data.VAO); // grab the assigned vao
-    //glDrawElements(GL_TRIANGLES, object.Data.ArraySize, GL_UNSIGNED_INT, 0); // draw 
 
-    float MovementDistance = 5.0f;
-    float SpeedMultiplier = 3.0f;
 
-    float Calculation = (sin((glfwGetTime() * SpeedMultiplier) - startTime) + 1 / 2) * MovementDistance;
+    // Boat
+    float Calculation = ((sin((glfwGetTime() * SpeedMultiplier) - startTime) + 1 / 2) * MovementDistance);
     float RotationCalculation = (sin((glfwGetTime() * 5.0f) - startTime) + 1 / 2) * 2;
+
+    float RotationDeg = fmod(glfwGetTime() * (360.0f / 15.0f), 360.0f); // remainder 
 
     mat4 Base = glm::rotate(mat4(1.0f), glm::radians(-90.0f), vec3(1.0f, 0.0f, 0.0f));
     Base = glm::scale(Base, glm::vec3(0.01f, 0.01f, 0.01f));
-    mat4 Position = glm::translate(Base, vec3(0,0, Calculation));
+    Base = glm::rotate(Base, glm::radians(RotationDeg), vec3(0.0f, 0.0f, 1.0f));
+    Base = glm::translate(Base, vec3(500.0f, 00.0f, 0.0f));
 
-    mat4 RotatedPosition = glm::rotate(Position, glm::radians(RotationCalculation), vec3(0.0f, 0.0f, 1.0f));
+    mat4 Position = glm::translate(Base, vec3(0,0, Calculation - 4.5f));
+    mat4 RotatedPosition = glm::rotate(Position, glm::radians(RotationCalculation), vec3(0.0f, 1.0f, 0.0f));
     
     prog.setUniform("ModelIn", RotatedPosition);
-    glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, boatTexture);
+    boatMesh->render();
 
-    mesh->render();
 
+    // Sea
+    mat4 SeaBase = glm::scale(mat4(1.0f), vec3(40.0f, 0.0f, 40.0f));
+    mat4 SeaTranslated = glm::translate(SeaBase, vec3(sin(glfwGetTime()) * 0.004f, 0.0f, (sin(glfwGetTime()) * 0.004f) + 0.2f));
+
+    prog.setUniform("ModelIn", SeaTranslated);
+    glBindTexture(GL_TEXTURE_2D, seaTexture);
+    seaMesh->render();
+
+    //Timing
     while (glfwGetTime() - currentFrame < 1 / FrameRate) {}
 }
 
