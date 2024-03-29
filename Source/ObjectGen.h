@@ -141,7 +141,7 @@ ModelData GenerateSea() {
 }
 
 ModelData GenerateSkybox() {
-    std::string Extension = ".png";
+    std::string Extension = ".jpg";
     std::vector<std::string> Faces {
         "right",
         "left",

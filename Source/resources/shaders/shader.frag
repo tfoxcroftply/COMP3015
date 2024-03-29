@@ -10,9 +10,9 @@ out vec4 FragColor;
 uniform bool SkyboxActive;
 uniform samplerCube skybox;
 uniform sampler2D Texture;
+uniform sampler2D Texture2;
 
-
-
+uniform bool MixEnabled;
 uniform vec3 FogColor;
 uniform float FogStart;
 uniform float FogEnd;
@@ -33,6 +33,13 @@ void main() {
     } else {
         vec2 FlippedCoords = vec2(TexCoords.x, -TexCoords.y); // flip image because stbi loads it the wrong way
 
+        vec3 NewTexture = texture(Texture, FlippedCoords).rgb;
+
+        if (MixEnabled) {
+            vec3 OverlayTexture = texture(Texture2, FlippedCoords).rgb;
+            NewTexture = mix(NewTexture,OverlayTexture,0.4f);
+        }
+
         // shared calculations for methods below
         vec3 CameraDirection = normalize(CameraPos - FragPosition);
         vec3 LightDirection = normalize(LightPosition - FragPosition);  
@@ -47,7 +54,7 @@ void main() {
         float SpecularShine = pow(max(dot(CameraDirection, ReflectionDirection), 0.0), 180);
         vec3 Specular = 1.2f * SpecularShine * LightColor;  
 
-        vec3 Stage1 = (Ambient + MixedDiffuse + Specular) * texture(Texture, FlippedCoords).rgb; // phong output
+        vec3 Stage1 = (Ambient + MixedDiffuse + Specular) * NewTexture; // phong output
 
         //Reflection - stage 2
         vec3 CameraDirection2 = normalize(CameraPos - FragPosition);

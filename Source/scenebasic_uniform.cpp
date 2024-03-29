@@ -18,6 +18,7 @@ std::unique_ptr<ObjMesh> boatMesh;
 std::unique_ptr<ObjMesh> seaMesh;
 int boatTexture;
 int seaTexture;
+int seaTexture2;
 
 using std::string;
 using std::cerr;
@@ -55,8 +56,13 @@ void SceneBasic_Uniform::initScene()
     prog.setUniform("LightColor", LightColor);
     prog.setUniform("SetReflection", Reflectance);
 
+    prog.setUniform("skybox", 0);
+    prog.setUniform("Texture", 1);
+    prog.setUniform("Texture2", 2);
+
     boatTexture = LoadTexture("resources/textures/boat.png");
     seaTexture = LoadTexture("resources/textures/sea.png");
+    seaTexture2 = LoadTexture("resources/textures/seaoverlay.png");
 
     // Object gen
     //object.Data = GenerateSquare();
@@ -69,7 +75,7 @@ void SceneBasic_Uniform::initScene()
 
     boatMesh = ObjMesh::load("resources/models/boat.obj");
 
-    seaMesh = ObjMesh::load("resources/models/sea2.obj");
+    seaMesh = ObjMesh::load("resources/models/sea.obj");
     sea.Transformation = glm::rotate(sea.Transformation, glm::radians(180.0f), vec3(0.0f, 0.0f, 0.0f));
     sea.Transformation = glm::scale(mat4(1.0f), vec3(40.0f, 1.0f, 40.0f));
 
@@ -115,6 +121,7 @@ void SceneBasic_Uniform::render() // Render loop
 
     //Others
     prog.setUniform("CameraPos", camera.Position);
+    prog.setUniform("MixEnabled", false);
 
     //Skybox
     glDisable(GL_DEPTH_TEST);
@@ -151,6 +158,7 @@ void SceneBasic_Uniform::render() // Render loop
 
     
     prog.setUniform("ModelIn", Base);
+    glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, boatTexture);
     boatMesh->render();
 
@@ -160,7 +168,15 @@ void SceneBasic_Uniform::render() // Render loop
     mat4 SeaTranslated = glm::translate(sea.Transformation, vec3(sin(glfwGetTime()) * 0.004f, 0.0f, (sin(glfwGetTime()) * 0.004f) + 0.2f));
 
     prog.setUniform("ModelIn", SeaTranslated);
+    prog.setUniform("MixEnabled", true);
+
+    glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, seaTexture);
+
+
+    glActiveTexture(GL_TEXTURE2);
+    glBindTexture(GL_TEXTURE_2D, seaTexture2);
+
     seaMesh->render();
 
     //Timing
