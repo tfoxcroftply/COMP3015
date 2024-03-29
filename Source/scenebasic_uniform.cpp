@@ -7,7 +7,6 @@
 #include "scenebasic_uniform.h"
 
 #include "Camera.h"
-#include "Models.h"
 #include "ObjectGen.h"
 
 Camera camera;
@@ -69,7 +68,10 @@ void SceneBasic_Uniform::initScene()
     //skybox.Transformation = scale(skybox.Transformation, vec3(1.0f, 1.0f, 999.0f));
 
     boatMesh = ObjMesh::load("resources/models/boat.obj");
-    seaMesh = ObjMesh::load("resources/models/sea.obj");
+
+    seaMesh = ObjMesh::load("resources/models/sea2.obj");
+    sea.Transformation = glm::rotate(sea.Transformation, glm::radians(180.0f), vec3(0.0f, 0.0f, 0.0f));
+    sea.Transformation = glm::scale(mat4(1.0f), vec3(40.0f, 1.0f, 40.0f));
 
     //glEnable(GL_DEPTH_TEST);
     //glDepthFunc(GL_LESS);
@@ -129,27 +131,33 @@ void SceneBasic_Uniform::render() // Render loop
 
 
     // Boat
-    float Calculation = ((sin((glfwGetTime() * SpeedMultiplier) - startTime) + 1 / 2) * MovementDistance);
-    float RotationCalculation = (sin((glfwGetTime() * 5.0f) - startTime) + 1 / 2) * 2;
-
-    float RotationDeg = fmod(glfwGetTime() * (360.0f / 15.0f), 360.0f); // remainder 
-
     mat4 Base = glm::rotate(mat4(1.0f), glm::radians(-90.0f), vec3(1.0f, 0.0f, 0.0f));
     Base = glm::scale(Base, glm::vec3(0.01f, 0.01f, 0.01f));
-    Base = glm::rotate(Base, glm::radians(RotationDeg), vec3(0.0f, 0.0f, 1.0f));
-    Base = glm::translate(Base, vec3(500.0f, 00.0f, 0.0f));
 
-    mat4 Position = glm::translate(Base, vec3(0,0, Calculation - 4.5f));
-    mat4 RotatedPosition = glm::rotate(Position, glm::radians(RotationCalculation), vec3(0.0f, 1.0f, 0.0f));
+    if (MovementEnabled) {
+        float Calculation = ((sin((glfwGetTime() * SpeedMultiplier) - startTime) + 1 / 2) * MovementDistance);
+        float RotationCalculation = (sin((glfwGetTime() * 5.0f) - startTime) + 1 / 2) * 2;
+
+        float RotationDeg = fmod(glfwGetTime() * (360.0f / 20.0f), 360.0f); // remainder 
+
+
+
+        Base = glm::rotate(Base, glm::radians(RotationDeg), vec3(0.0f, 0.0f, 1.0f));
+        Base = glm::translate(Base, vec3(400.0f, 00.0f, 0.0f));
+
+        mat4 Position = glm::translate(Base, vec3(0, 0, Calculation - 4.5f));
+        Base = glm::rotate(Position, glm::radians(RotationCalculation), vec3(0.0f, 1.0f, 0.0f));
+    }
+
     
-    prog.setUniform("ModelIn", RotatedPosition);
+    prog.setUniform("ModelIn", Base);
     glBindTexture(GL_TEXTURE_2D, boatTexture);
     boatMesh->render();
 
 
     // Sea
-    mat4 SeaBase = glm::scale(mat4(1.0f), vec3(40.0f, 0.0f, 40.0f));
-    mat4 SeaTranslated = glm::translate(SeaBase, vec3(sin(glfwGetTime()) * 0.004f, 0.0f, (sin(glfwGetTime()) * 0.004f) + 0.2f));
+
+    mat4 SeaTranslated = glm::translate(sea.Transformation, vec3(sin(glfwGetTime()) * 0.004f, 0.0f, (sin(glfwGetTime()) * 0.004f) + 0.2f));
 
     prog.setUniform("ModelIn", SeaTranslated);
     glBindTexture(GL_TEXTURE_2D, seaTexture);

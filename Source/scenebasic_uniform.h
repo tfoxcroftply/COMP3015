@@ -23,13 +23,13 @@ private:
     const int FrameRate = 120;
     const int FOV = 70;
 
-    const glm::vec3 FogColor = glm::vec3(0.8f, 0.8f, 0.8f);
+    const glm::vec3 FogColor = glm::vec3(1.0f, 1.0f, 1.0f);
     const float FogStartDist = 5.0f;
     const float FogEndDist = 30.0f;
     const float HazeStrength = 0.07f; // Sort of like a scene tint
     const glm::vec3 HazeColor = glm::vec3(0.9f, 1.0f, 1.0f); // very slightly blue
-    const glm::vec3 LightPosition = glm::vec3(99.0f, 99.0f, 99.0f);
-    const glm::vec3 LightColor = glm::vec3(0.6f, 0.6f, 0.6f);
+    const glm::vec3 LightPosition = glm::vec3(5.0f, 5.0f, 5.0f);
+    const glm::vec3 LightColor = glm::vec3(0.7f, 0.7f, 0.7f);
 
     const float Brightness = 1.0f;
     const float Reflectance = 0.04f;
@@ -40,6 +40,8 @@ private:
     float deltaTime = 0.0f;
     float lastFrame = 0.0f;
     float startTime = glfwGetTime();
+
+    bool MovementEnabled = true;
 
     void compile();
 

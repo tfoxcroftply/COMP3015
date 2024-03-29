@@ -1,4 +1,3 @@
-#include "Models.h"
 
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
@@ -7,6 +6,17 @@
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "helper/stb/stb_image.h"
+
+struct ModelData {
+    int VAO;
+    int ArraySize;
+    unsigned int TextureID = -1;
+};
+
+struct Model {
+    ModelData Data;
+    glm::mat4 Transformation = glm::mat4(1.0f);
+};
 
 /* ModelData GenerateSquare() {
     float vertices[] = {

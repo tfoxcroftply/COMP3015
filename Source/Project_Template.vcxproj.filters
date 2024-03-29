@@ -82,9 +82,6 @@
     <ClInclude Include="Camera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Models.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ObjectGen.h">
       <Filter>Header Files</Filter>
     </ClInclude>

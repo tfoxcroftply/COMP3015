@@ -17,8 +17,8 @@ uniform bool SkyboxActive;
 
 void main() {
     if (!SkyboxActive) {
-        Color = vec3(0.5, 0.5, 0.5); // default color
-        Normal = VertexNormal;
+        Color = vec3(0.5, 0.5, 0.5); // default color for if textures dont load
+        Normal = mat3(transpose(inverse(ModelIn))) * VertexNormal; 
         FragPosition = vec3(ModelIn * vec4(VertexPosition, 1.0));
         TexCoords = VertexTexCoords;
         gl_Position = ProjectionIn * ViewIn * ModelIn * vec4(VertexPosition, 1.0);

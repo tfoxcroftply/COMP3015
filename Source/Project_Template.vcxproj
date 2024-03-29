@@ -164,7 +164,6 @@
     <ClInclude Include="helper\trianglemesh.h" />
     <ClInclude Include="helper\utils.h" />
     <ClInclude Include="ObjectGen.h" />
-    <ClInclude Include="Models.h" />
     <ClInclude Include="helper\glslprogram.h" />
     <ClInclude Include="helper\glutils.h" />
     <ClInclude Include="helper\scene.h" />
