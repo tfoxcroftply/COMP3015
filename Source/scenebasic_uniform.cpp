@@ -139,7 +139,7 @@ void SceneBasic_Uniform::render() // Render loop
 
     // Boat
     mat4 Base = glm::rotate(mat4(1.0f), glm::radians(-90.0f), vec3(1.0f, 0.0f, 0.0f));
-    Base = glm::scale(Base, glm::vec3(0.01f, 0.01f, 0.01f));
+    Base = glm::scale(Base, glm::vec3(0.025f, 0.025f, 0.025f));
 
     if (MovementEnabled) {
         float Calculation = ((sin((glfwGetTime() * SpeedMultiplier) - startTime) + 1 / 2) * MovementDistance);
@@ -150,9 +150,9 @@ void SceneBasic_Uniform::render() // Render loop
 
 
         Base = glm::rotate(Base, glm::radians(RotationDeg), vec3(0.0f, 0.0f, 1.0f));
-        Base = glm::translate(Base, vec3(400.0f, 00.0f, 0.0f));
+        Base = glm::translate(Base, vec3(150.0f, 00.0f, 0.0f));
 
-        mat4 Position = glm::translate(Base, vec3(0, 0, Calculation - 4.5f));
+        mat4 Position = glm::translate(Base, vec3(0, 0, Calculation - 0.5f));
         Base = glm::rotate(Position, glm::radians(RotationCalculation), vec3(0.0f, 1.0f, 0.0f));
     }
 
