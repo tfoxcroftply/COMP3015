@@ -28,7 +28,7 @@ public:
 	glm::mat4 GetViewMatrix();
 	void MouseInput(double XPos, double YPos);
 	bool KeyPress(int Input) {
-		if (glfwGetKey(Window, Input) == GLFW_PRESS) {
+		if (glfwGetKey(Window, Input) == GLFW_PRESS) { // Ensuring that it has actually been pressed
 			return true;
 		}
 		return false;

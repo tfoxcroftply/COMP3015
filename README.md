@@ -1,7 +1,7 @@
 # COMP3015 CW1 By Tobey Foxcroft
 
 ## Development environment
-This program was developed using Visual Studio 2022 on Windows 11. It was based off the program template provided in the Labs. GitHub was used extensively for version control, and for allowing seamless workflow across my desktop and my laptop.
+This program was developed using Visual Studio 2022 on Windows 11. It was based off the program template provided in the Labs. GitHub was used extensively for version control, and for allowing seamless workflow across my desktop and my laptop. It has been tested for Intel and NVIDIA GPUs. 
 
 ## How does it work?
 ### Code structure and interaction

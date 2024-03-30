@@ -21,10 +21,9 @@ uniform vec3 LightColor;
 uniform float HazeStrength;
 uniform vec3 HazeColor;
 uniform float Brightness;
-
-uniform vec3 CameraPos;
 uniform float SetReflection;
 
+uniform vec3 CameraPos;
 
 void main() {
     if (SkyboxActive) {
@@ -32,7 +31,6 @@ void main() {
         FragColor = texture(skybox, FlipCoords); // direct texture passing
     } else {
         vec2 FlippedCoords = vec2(TexCoords.x, -TexCoords.y); // flip image because stbi loads it the wrong way
-
         vec3 NewTexture = texture(Texture, FlippedCoords).rgb;
 
         if (MixEnabled) {
@@ -41,24 +39,23 @@ void main() {
         }
 
         // shared calculations for methods below
+        vec3 Normal2 = normalize(Normal); // less clutter
         vec3 CameraDirection = normalize(CameraPos - FragPosition);
         vec3 LightDirection = normalize(LightPosition - FragPosition);  
-        vec3 ReflectionDirection = reflect(-LightDirection, normalize(Normal)); 
+        vec3 ReflectionDirection = reflect(-LightDirection, Normal2);
 
         // phong with ambient, diffuse and specular - stage 1
         vec3 Ambient = (Brightness * LightColor); // ambient
 
-        float Diffuse = max(dot(normalize(Normal), LightDirection), 0.0);
+        float Diffuse = max(dot(Normal2, LightDirection), 0.0);
         vec3 MixedDiffuse = Diffuse * LightColor;
-
         float SpecularShine = pow(max(dot(CameraDirection, ReflectionDirection), 0.0), 180);
         vec3 Specular = 1.2f * SpecularShine * LightColor;  
-
         vec3 Stage1 = (Ambient + MixedDiffuse + Specular) * NewTexture; // phong output
 
         //Reflection - stage 2
         vec3 CameraDirection2 = normalize(CameraPos - FragPosition);
-        vec3 ReflectionVector = reflect(CameraDirection2, normalize(Normal));
+        vec3 ReflectionVector = reflect(CameraDirection2, Normal2);
         vec3 ReflectionVector2 = vec3(ReflectionVector.x, -ReflectionVector.y, -ReflectionVector.z); // trial and error to match reflections
         vec3 ReflectedColor = texture(skybox, ReflectionVector2).rgb;
         vec3 Stage2 = mix(Stage1, ReflectedColor, SetReflection);
@@ -72,7 +69,7 @@ void main() {
 
 
         // output
-        FragColor = vec4(Stage4,0.2f);  // mix reflection/haze with fog
+        FragColor = vec4(Stage4,0.0f);// final convert
         //FragColor = vec4(normalize(ReflectionVector) * 0.5 + 0.5, 1.0);
     }
 }

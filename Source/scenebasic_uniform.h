@@ -3,6 +3,12 @@
 
 #include "helper/scene.h"
 
+#include <cstdio>
+#include <cstdlib>
+#include <string>
+#include <iostream>
+#include <memory>
+
 #include <glad/glad.h>
 #include "helper/glslprogram.h"
 #include "helper/glutils.h"
@@ -10,7 +16,6 @@
 #include "helper/objmesh.h"
 
 #include <GLFW/glfw3.h>
-
 
 class SceneBasic_Uniform : public Scene
 {
@@ -25,14 +30,14 @@ private:
 
     const glm::vec3 FogColor = glm::vec3(0.91f, 0.92f, 0.93f);
     const float FogStartDist = 5.0f;
-    const float FogEndDist = 30.0f;
+    const float FogEndDist = 50.0f;
     const float HazeStrength = 0.07f; // Sort of like a scene tint
     const glm::vec3 HazeColor = glm::vec3(0.9f, 1.0f, 1.0f); // very slightly blue
     const glm::vec3 LightPosition = glm::vec3(6999.0f, 6999.0f, -9999.0f);
     const glm::vec3 LightColor = glm::vec3(0.7f, 0.7f, 0.7f);
 
     const float Brightness = 1.0f;
-    const float Reflectance = 0.5f;
+    const float Reflectance = 0.4f;
 
     float MovementDistance = 1.0f; //boat stuff
     float SpeedMultiplier = 3.0f;
