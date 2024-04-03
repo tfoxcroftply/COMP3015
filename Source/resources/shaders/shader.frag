@@ -48,7 +48,7 @@ void main() {
         vec3 Ambient = (Brightness * LightColor); // ambient
         float Diffuse = max(dot(Normal2, LightDirection), 0.0);
         vec3 MixedDiffuse = Diffuse * LightColor;
-        float SpecularShine = pow(max(dot(CameraDirection, ReflectionDirection), 0.0), 180);
+        float SpecularShine = pow(max(dot(CameraDirection, ReflectionDirection), 0.0), 180); // calculations created with help from learnopengl
         vec3 Specular = 1.2f * SpecularShine * LightColor;  
         vec3 Stage1 = (Ambient + MixedDiffuse + Specular) * NewTexture; // phong output
 
