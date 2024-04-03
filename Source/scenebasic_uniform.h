@@ -52,7 +52,6 @@ private:
 
 public:
     SceneBasic_Uniform();
-
     void initScene();
     void update(float t);
     void render();
